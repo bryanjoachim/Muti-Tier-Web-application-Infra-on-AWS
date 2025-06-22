@@ -1,10 +1,22 @@
 
 # Multi-Tier Web Application Infrastructure Using Terraform
+This app will create one public and private subnet. Security Group for the web tier (public subnet) that allows inbound traffic on HTTP/HTTPS. Security Group for the application tier (private subnet) that only allows communication from the web tier (public subnet).
+
+We will provision at least two EC2 instances (or equivalent) in the private subnet to act as your application servers.
+
+Provision a third EC2 instance in the public subnet to act as a bastion host to access the private instances.
+
+We will setup an Application Load Balancer in the public subnet to distribute traffic to our application servers.
+
+Create a managed relational database RDS in the private subnet and enable automatic backups for the database to ensure data persistence.
+
+Also we will setup Auto Scaling Group for your application servers to automatically scale the number of instances based on traffic load and Define a scaling policy to increase the number of instances when CPU utilization exceeds a certain threshold
+
 
 
 
 ## Create a Ec2 instance
-Create a Ec2 instance config (Amazon linux 2023) t2.micro. Install httpd server and mysql client. Once created stop this ec2 instance and generate an Ami out on it.
+Create a Ec2 instance config (Amazon linux 2023) t2.micro. Install httpd server and mysql client. Once created stop this ec2 instance and generate an Ami out of it.
 
 ## Add/edit current EC2 user policies
 Add "AmazonEC2FullAccess" , "AmazonRDSFullAccess" and "AmazonVPCFullAccess"
