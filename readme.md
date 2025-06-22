@@ -6,7 +6,7 @@
 ## Create a Ec2 instance
 Create a Ec2 instance config (Amazon linux 2023) t2.micro. Install httpd server and mysql client. Once created stop this ec2 instance and generate an Ami out on it.
 
-## Add/edit EC2 user policies
+## Add/edit current EC2 user policies
 Add "AmazonEC2FullAccess" , "AmazonRDSFullAccess" and "AmazonVPCFullAccess"
 
 
