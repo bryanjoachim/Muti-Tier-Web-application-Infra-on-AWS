@@ -1,8 +1,14 @@
 
 # Multi-Tier Web Application Infrastructure Using Terraform
 
+
+
 ## Create a Ec2 instance
 Create a Ec2 instance config (Amazon linux 2023) t2.micro. Install httpd server and mysql client. Once created stop this ec2 instance and generate an Ami out on it.
+
+## Add/edit EC2 user policies
+Add "AmazonEC2FullAccess" , "AmazonRDSFullAccess" and "AmazonVPCFullAccess"
+
 
 ## Create provider.tf file
 ```bash
@@ -30,6 +36,7 @@ variable "key_name" {
 ```
 
 ## Create main.tf
+Make sure to copy the AMI ID to app servers or else it wont work
 ```bash
 resource "aws_vpc" "main" {
     cidr_block = var.vpc_cidr
@@ -172,7 +179,7 @@ resource "aws_security_group" "alb_sg" {
 }
 
 resource "aws_instance" "app_server_1" {
-  ami               = "ami-08e3fb120c98716a2"
+  ami               = "Copy the AMI id of ec2 instance"
   instance_type     = "t2.micro"
   subnet_id         = aws_subnet.private_1.id
   security_groups   = [aws_security_group.app_sg.id]
@@ -180,7 +187,7 @@ resource "aws_instance" "app_server_1" {
   iam_instance_profile = aws_iam_instance_profile.app_instance_profile.name
 }
 resource "aws_instance" "app_server_2" {
-  ami = "ami-08e3fb120c98716a2"
+  ami = "Copy the AMI id of ec2 instance"
   instance_type     = "t2.micro"
   subnet_id         = aws_subnet.private_2.id
   security_groups   = [aws_security_group.app_sg.id]
