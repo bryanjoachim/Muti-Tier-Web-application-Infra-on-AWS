@@ -10,13 +10,20 @@ We will setup an Application Load Balancer in the public subnet to distribute tr
 
 Create a managed relational database RDS in the private subnet and enable automatic backups for the database to ensure data persistence.
 
-Also we will setup Auto Scaling Group for your application servers to automatically scale the number of instances based on traffic load and Define a scaling policy to increase the number of instances when CPU utilization exceeds a certain threshold
+Also we will setup Auto Scaling Group for your application servers to automatically scale the number of instances based on traffic load and Define a scaling policy to increase the number of instances when CPU utilization exceeds a certain threshold.
 
 
 
 
 ## Create a Ec2 instance
-Create a Ec2 instance config (Amazon linux 2023) t2.micro. Install httpd server and mysql client. Once created stop this ec2 instance and generate an Ami out of it.
+Create a Ec2 instance config (Amazon linux 2023) t2.micro. Install httpd server and mysql client. Once created stop this ec2 instance and generate an Ami out of it. 
+
+```bash
+sudo yum update -y
+wget https://dev.mysql.com/get/mysql80-community-release-el9-1.noarch.rpm
+sudo dnf install -y mysql80-community-release-el9-1.noarch.rpm
+sudo dnf install -y mysql-community-client --nogpgcheck
+```
 
 ## Add/edit current EC2 user policies
 Add "AmazonEC2FullAccess" , "AmazonRDSFullAccess" and "AmazonVPCFullAccess"
