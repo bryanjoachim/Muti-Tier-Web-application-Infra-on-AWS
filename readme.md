@@ -55,7 +55,7 @@ variable "key_name" {
 ```
 
 ## Create main.tf
-Make sure to copy the created EC2 instance AMI ID to app servers or else it wont work
+Make sure to copy the created EC2 instance AMI ID to app servers and launch template or else it wont work.
 ```bash
 resource "aws_vpc" "main" {
     cidr_block = var.vpc_cidr
