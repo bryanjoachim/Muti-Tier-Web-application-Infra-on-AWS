@@ -3,21 +3,27 @@ resource "aws_vpc" "main" {
 
 }
 
-resource "aws_subnet" "public" {
+resource "aws_subnet" "public_1" {
   vpc_id = aws_vpc.main.id
   cidr_block = "10.0.1.0/24"
   map_public_ip_on_launch = true
 }
 
-resource "aws_subnet" "private_1" {
+resource "aws_subnet" "public_2" {
   vpc_id = aws_vpc.main.id
   cidr_block = "10.0.2.0/24"
+  map_public_ip_on_launch = true
+}
+
+resource "aws_subnet" "private_1" {
+  vpc_id = aws_vpc.main.id
+  cidr_block = "10.0.3.0/24"
   availability_zone = "us-east-1a"
 }
 
 resource "aws_subnet" "private_2" {
     vpc_id = aws_vpc.main.id
-    cidr_block = "10.0.3.0/24"
+    cidr_block = "10.0.4.0/24"
     availability_zone = "us-east-1b"
 }
 
@@ -34,8 +40,13 @@ resource "aws_route_table" "publicRoute" {
   }
 }
 
-resource "aws_route_table_association" "publicAssoc" {
-  subnet_id = aws_subnet.public.id
+resource "aws_route_table_association" "publicAssoc1" {
+  subnet_id = aws_subnet.public_1.id
+  route_table_id = aws_route_table.publicRoute.id
+}
+
+resource "aws_route_table_association" "publicAssoc2" {
+  subnet_id = aws_subnet.public_2.id
   route_table_id = aws_route_table.publicRoute.id
 }
 
@@ -128,6 +139,13 @@ resource "aws_security_group" "alb_sg" {
     protocol = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
+
+   ingress {
+    from_port = 443
+    to_port = 443
+    protocol = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
     
   egress {
     from_port   = 0
@@ -139,7 +157,7 @@ resource "aws_security_group" "alb_sg" {
 }
 
 resource "aws_instance" "app_server_1" {
-  ami               = "ami-08e3fb120c98716a2"
+  ami               = "ami-06cc208d3a63acada"
   instance_type     = "t2.micro"
   subnet_id         = aws_subnet.private_1.id
   security_groups   = [aws_security_group.app_sg.id]
@@ -147,7 +165,7 @@ resource "aws_instance" "app_server_1" {
   iam_instance_profile = aws_iam_instance_profile.app_instance_profile.name
 }
 resource "aws_instance" "app_server_2" {
-  ami = "ami-08e3fb120c98716a2"
+  ami = "ami-06cc208d3a63acada"
   instance_type     = "t2.micro"
   subnet_id         = aws_subnet.private_2.id
   security_groups   = [aws_security_group.app_sg.id]
@@ -160,7 +178,7 @@ resource "aws_instance" "app_server_2" {
 resource "aws_instance" "bastion" {
   ami                         = "ami-02457590d33d576c3" 
   instance_type               = "t2.micro"
-  subnet_id                   = aws_subnet.public.id
+  subnet_id                   = aws_subnet.public_1.id
   associate_public_ip_address = true
   key_name                    = "my-ec2-key" 
   security_groups = [aws_security_group.web_sg.id]
@@ -171,9 +189,9 @@ resource "aws_instance" "bastion" {
 
 resource "aws_lb" "app_alb" {
     name = "app-alb"
-    internal = "true"
+    internal = "false"
     load_balancer_type = "application"
-    subnets = [aws_subnet.private_1.id, aws_subnet.private_2.id]
+    subnets = [aws_subnet.public_1.id, aws_subnet.public_2.id]
     security_groups = [aws_security_group.alb_sg.id]
 
 }
@@ -294,7 +312,7 @@ resource "aws_iam_instance_profile" "app_instance_profile" {
 # Launch Template for App Instances
 resource "aws_launch_template" "app_lt" {
   name_prefix   = "app-lt-"
-  image_id      = "ami-08e3fb120c98716a2" # Use your actual AMI ID
+  image_id      = "ami-06cc208d3a63acada" # Use your actual AMI ID
   instance_type = "t2.micro"
   key_name      = "my-ec2-key"
 
